@@ -1,0 +1,10 @@
+<data>
+    <event>Birthday Party</event>
+    <date>2023-05-01</date>
+    <guests>
+        <person>Alice</person>
+        <person>Bob</person>
+        <person>David</person>
+        <person>Emily</person>
+    </guests>
+</data>
