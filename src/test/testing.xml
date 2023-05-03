@@ -1,0 +1,22 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="all test SUITE">
+    <test name="Scans test">
+        <packages>
+            <package name="Lab_8_test.*"/>
+        </packages>
+    </test>
+    <parameter name="name" value="John" />
+    <parameter name="n" value="30" />
+    <parameter name="name" value="John" />
+    <parameter name="expectedOutput" value="Your name is John\nyour age is 30" />
+    <test name="Parameter Test one">
+        <classes>
+            <class name="Lab_8_test.ParametrizedScansTest">
+                <methods>
+                    <include name="testGetInfo" />
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>
