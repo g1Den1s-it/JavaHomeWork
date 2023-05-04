@@ -1,6 +1,3 @@
 make CRUD tests for Trello Dashboard https://trello.com/en
 Save result to trello_collection.json (export from postman)
 
-trello api key = ab76aa7792e7fb81d930b4bb5a0ac2ca
-trello secret key = 41dd1ed65b53a60dfdd7aaf3dd1482071c07bf213cf0078cbdc6330793ba4787
-trello token = ATTA25f4d847d921192fb5f3edabd4375b417aa4ed80768f8f0b2777fc8f0e57e76fF6019A89

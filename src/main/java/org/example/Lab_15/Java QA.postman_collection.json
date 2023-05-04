@@ -1,0 +1,454 @@
+{
+	"info": {
+		"_postman_id": "20996bcb-5ae7-40b9-9a5e-e6701b282e16",
+		"name": "Java QA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20984987"
+	},
+	"item": [
+		{
+			"name": "Create MyBoard",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"board_name\",\"MyNewBoard\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"board_id\", pm.response.json().id);",
+							"pm.globals.get(\"board_id\");",
+							"",
+							"pm.test(\"Your test name\", function () {",
+							"    var name = pm.response.json().name;",
+							"    pm.expect(name).to.eql(pm.collectionVariables.get(\"board_name\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json'",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/?name={{board_name}}&key={{API_KEY}}&token={{API_TOKEN}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{board_name}}"
+						},
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create a new list of cards",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"list_name\", \"My list\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"list_id\", pm.response.json().id);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Check name of list\", function () {",
+							"    var name = pm.response.json().name;",
+							"    pm.expect(name).to.eql(pm.collectionVariables.get(\"list_name\"));",
+							"});",
+							"pm.test(\"Check id of board\", function () {",
+							"    var id = pm.response.json().idBoard;",
+							"    pm.expect(id).to.eql(pm.globals.get(\"board_id\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/lists?key={{API_KEY}}&token={{API_TOKEN}}&name={{list_name}}&idBoard={{board_id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"lists"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "name",
+							"value": "{{list_name}}"
+						},
+						{
+							"key": "idBoard",
+							"value": "{{board_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create a new card",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"name_card\", \"MY Card\");",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"card_id\", pm.response.json().id);",
+							"",
+							"pm.test(\"name of card\", function () {",
+							"    var name = pm.response.json().name;",
+							"    pm.expect(name).to.eql(pm.collectionVariables.get(\"name_card\"));",
+							"});",
+							"pm.test(\"ID list test\", function () {",
+							"    var id = pm.response.json().idList;",
+							"    pm.expect(id).to.eql(pm.globals.get(\"list_id\"));",
+							"});",
+							"pm.test(\"ID board test\", function () {",
+							"    var id = pm.response.json().idBoard;",
+							"    pm.expect(id).to.eql(pm.globals.get(\"board_id\"));",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://trello.com/1/cards?key={{API_KEY}}&token={{API_TOKEN}}&idList={{list_id}}&name={{name_card}}",
+					"protocol": "https",
+					"host": [
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "idList",
+							"value": "{{list_id}}"
+						},
+						{
+							"key": "name",
+							"value": "{{name_card}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create a new label",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"label_name\", \"my lable\");",
+							"pm.collectionVariables.set(\"color\", \"red\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"label_id\", pm.response.json().id);",
+							"",
+							"pm.test(\"ID board test\", function () {",
+							"    var id = pm.response.json().idBoard;",
+							"    pm.expect(id).to.eql(pm.globals.get(\"board_id\"));",
+							"});",
+							"pm.test(\"test color and name\", function () {",
+							"    var color = pm.response.json().color;",
+							"    var name = pm.response.json().name;",
+							"    pm.expect(color).to.eql(pm.collectionVariables.get(\"color\"));",
+							"    pm.expect(name).to.eql(pm.collectionVariables.get(\"label_name\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/labels?key={{API_KEY}}&token={{API_TOKEN}}&idBoard={{board_id}}&name={{label_name}}&color={{color}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"labels"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "idBoard",
+							"value": "{{board_id}}"
+						},
+						{
+							"key": "name",
+							"value": "{{label_name}}"
+						},
+						{
+							"key": "color",
+							"value": "{{color}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "connect label to the card",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/cards/{{card_id}}/idLabels?key={{API_KEY}}&token={{API_TOKEN}}&value={{label_id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards",
+						"{{card_id}}",
+						"idLabels"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "value",
+							"value": "{{label_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update the color of the label on the card",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/labels/{{label_id}}/color?key={{API_KEY}}&token={{API_TOKEN}}&value=blue",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"labels",
+						"{{label_id}}",
+						"color"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						},
+						{
+							"key": "value",
+							"value": "blue"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove the label from the card",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/cards/{{card_id}}/idLabels/{{label_id}}?key={{API_KEY}}&token={{API_TOKEN}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards",
+						"{{card_id}}",
+						"idLabels",
+						"{{label_id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{API_KEY}}"
+						},
+						{
+							"key": "token",
+							"value": "{{API_TOKEN}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.environment.set(\"API_KEY\", \"ab76aa7792e7fb81d930b4bb5a0ac2ca\");",
+					"pm.environment.set(\"API_TOKEN\", \"ATTA25f4d847d921192fb5f3edabd4375b417aa4ed80768f8f0b2777fc8f0e57e76fF6019A89\");",
+					"pm.environment.set(\"board_name\", \"MyNewBoard\");",
+					"pm.globals.get(\"API_KEY\");",
+					"pm.globals.get(\"API_TOKEN\");",
+					"pm.globals.get(\"board_name\");"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "board_name",
+			"value": ""
+		},
+		{
+			"key": "list_name",
+			"value": ""
+		},
+		{
+			"key": "name_card",
+			"value": ""
+		},
+		{
+			"key": "label_name",
+			"value": ""
+		},
+		{
+			"key": "color",
+			"value": ""
+		}
+	]
+}
