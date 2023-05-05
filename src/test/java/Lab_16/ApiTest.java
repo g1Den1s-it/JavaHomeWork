@@ -5,12 +5,17 @@ import org.example.Lab_14.AllureListener;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
-
+import org.testng.Assert;
+import java.net.http.HttpClient;
 import java.io.File;
 import static io.restassured.RestAssured.given;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -91,5 +96,19 @@ public class ApiTest {
                         "key="+ trelloKey +"&" +
                         "token=" + trelloToken)
                 .then().assertThat().statusCode(200);
+    }
+
+    @Test
+    public void ApiTestHttpRequest() throws URISyntaxException, IOException, InterruptedException {
+        String nameBoard = UUID.randomUUID().toString().substring(2,10);
+        String trelloKey = properties.getProperty("trello.key");
+        String trelloToken = properties.getProperty("trello.token");
+        HttpRequest createBoardRequest = (HttpRequest) HttpRequest.newBuilder()
+                .header("accept", "application/json")
+                .uri(new URL("https://api.trello.com/1/boards/?name="+nameBoard+"&key="+trelloKey+"&token=" + trelloToken).toURI())
+                .POST(HttpRequest.BodyPublishers.ofString("", StandardCharsets.UTF_8)).build();
+            HttpResponse createBoardResponse = HttpClient.newBuilder().build().send(createBoardRequest, HttpResponse.BodyHandlers.ofString());
+            Assert.assertEquals(createBoardResponse.statusCode(), 200);
+
     }
 }
