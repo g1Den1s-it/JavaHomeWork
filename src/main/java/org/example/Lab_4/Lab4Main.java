@@ -1,7 +1,7 @@
-package org.example;
+package org.example.Lab_4;
 import java.util.concurrent.CountDownLatch;
 
-public class Main {
+public class Lab4Main {
     public static void main(String[] args) throws InterruptedException {
         int numThreads = 5;
         CountDownLatch latch = new CountDownLatch(numThreads);
