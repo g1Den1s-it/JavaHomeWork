@@ -175,7 +175,7 @@ public class TrelloBO {
                         "?key="+ trelloKey +
                         "&token=" + trelloToken).toURI())
                 .DELETE().build();
-        
+
         HttpResponse httpResponse = HttpClient.newBuilder().build().send(httpRequest, HttpResponse.BodyHandlers.ofString());
         Assert.assertEquals(httpResponse.statusCode(), 200);
     }

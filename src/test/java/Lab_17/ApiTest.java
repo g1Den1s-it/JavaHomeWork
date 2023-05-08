@@ -5,12 +5,15 @@ import org.example.Lab_17.bo.TrelloBO;
 import org.example.Lab_17.elements.board.CreateBoardRequest;
 import org.example.Lab_17.elements.board.CreateBoardResponse;
 import org.example.Lab_17.elements.board.TrelloBoard;
+import org.example.Lab_17.elements.card.Card;
 import org.example.Lab_17.elements.card.CreateCardRequest;
 import org.example.Lab_17.elements.card.CreateCardResponse;
 import org.example.Lab_17.elements.label.CreateLabelRequest;
 import org.example.Lab_17.elements.label.CreateLabelResponse;
+import org.example.Lab_17.elements.label.Label;
 import org.example.Lab_17.elements.list.CreateListRequest;
 import org.example.Lab_17.elements.list.CreateListResponse;
+import org.example.Lab_17.elements.list.TrelloList;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -53,8 +56,13 @@ public class ApiTest {
         expectedCreateBoardResponse.getBody().setName(nameBoard);
         expectedCreateBoardResponse.setStatusCode(200);
 
-        //Assert.assertEquals(createBoardResponse, expectedCreateBoardResponse);
+        expectedCreateBoardResponse.setStatusCode(200);
+        expectedCreateBoardResponse.setBody(new TrelloBoard());
+        expectedCreateBoardResponse.getBody().setName(nameBoard);
 
+        //some test for board
+        Assert.assertEquals(createBoardResponse.getBody().getName(), expectedCreateBoardResponse.getBody().getName());
+        Assert.assertEquals(createBoardResponse.getStatusCode(), expectedCreateBoardResponse.getStatusCode());
 
         //create list
         CreateListRequest createListRequest = new CreateListRequest();
@@ -67,8 +75,17 @@ public class ApiTest {
         createListRequest.setToken(trelloToken);
 
         CreateListResponse createListResponse = trelloBO.createList(createListRequest);
-        //test need
-        //Assert.assertEquals(createBoardResponse, expectedCreateBoardResponse);
+        CreateListResponse expectedCreateListResponse = new CreateListResponse();
+
+        expectedCreateListResponse.setStatusCode(200);
+        expectedCreateListResponse.setBody(new TrelloList());
+        expectedCreateListResponse.getBody().setName(listName);
+        expectedCreateListResponse.getBody().setIdBoard(createBoardResponse.getBody().getId());
+
+        //test for list
+        Assert.assertEquals(createListResponse.getStatusCode(), expectedCreateListResponse.getStatusCode());
+        Assert.assertEquals(createListResponse.getBody().getName(), expectedCreateListResponse.getBody().getName());
+        Assert.assertEquals(createListResponse.getBody().getIdBoard(), expectedCreateListResponse.getBody().getIdBoard());
 
 
         //Create Card
@@ -81,10 +98,24 @@ public class ApiTest {
         createCardRequest.setIdList(createListResponse.getBody().getId());
 
         CreateCardResponse createCardResponse = trelloBO.createCard(createCardRequest);
-        //test need
-        //Assert.assertEquals(createBoardResponse, expectedCreateBoardResponse);
+        CreateCardResponse expectedCreateCardResponse = new CreateCardResponse();
+
+        expectedCreateCardResponse.setStatusCode(200);
+        expectedCreateCardResponse.setBody(new Card());
+        expectedCreateCardResponse.getBody().setName(cardName);
+        expectedCreateCardResponse.getBody().setIdList(createListResponse.getBody().getId());
+        expectedCreateCardResponse.getBody().setIdBoard(createBoardResponse.getBody().getId());
+
+        //test for Card
+        Assert.assertEquals(createCardResponse.getStatusCode(), expectedCreateCardResponse.getStatusCode());
+        Assert.assertEquals(createCardResponse.getBody().getName(), expectedCreateCardResponse.getBody().getName());
+        Assert.assertEquals(createCardResponse.getBody().getIdBoard(), expectedCreateCardResponse.getBody().getIdBoard());
+        Assert.assertEquals(createCardResponse.getBody().getIdList(), expectedCreateCardResponse.getBody().getIdList());
 
 
+
+
+        //create label
         String labelName = UUID.randomUUID().toString().substring(3,10);
         CreateLabelRequest createLabelRequest = new CreateLabelRequest();
 
@@ -95,6 +126,20 @@ public class ApiTest {
         createLabelRequest.setIdBoard(createBoardResponse.getBody().getId());
 
         CreateLabelResponse createLabelResponse = trelloBO.creaetLabel(createLabelRequest);
+        CreateLabelResponse expectedCreateLabelResponse = new CreateLabelResponse();
+
+        expectedCreateLabelResponse.setStatusCode(200);
+        expectedCreateLabelResponse.setBody(new Label());
+        expectedCreateLabelResponse.getBody().setName(labelName);
+        expectedCreateLabelResponse.getBody().setIdBoard(createBoardResponse.getBody().getId());
+        expectedCreateLabelResponse.getBody().setColor("red");
+
+        //test for label
+        Assert.assertEquals(createLabelResponse.getStatusCode(), expectedCreateLabelResponse.getStatusCode());
+        Assert.assertEquals(createLabelResponse.getBody().getName(), expectedCreateLabelResponse.getBody().getName());
+        Assert.assertEquals(createLabelResponse.getBody().getColor(), expectedCreateLabelResponse.getBody().getColor());
+        Assert.assertEquals(createLabelResponse.getBody().getIdBoard(), expectedCreateLabelResponse.getBody().getIdBoard());
+
 
         //connect label to card
         trelloBO.connectLable(createCardResponse,createLabelResponse.getBody().getId() ,trelloKey, trelloToken);
@@ -105,58 +150,5 @@ public class ApiTest {
 
         //Delete label
         trelloBO.deleteLabel(createCardResponse.getBody().getId(), createLabelResponse.getBody().getId(), trelloKey, trelloToken);
-
-
-
-//        String labelName = UUID.randomUUID().toString().substring(3,10);
-//        String idLabel = given().contentType("application/json").accept("application/json")
-//                .log().all().when().post("https://api.trello.com/1/labels?" +
-//                        "key="+trelloKey+"&" +
-//                        "token="+trelloToken+"&" +
-//                        "idBoard="+ idBoard +"&" +
-//                        "name="+ labelName +"&" +
-//                        "color=red")
-//                .then().assertThat().statusCode(200).extract().jsonPath().getString("id");
-//
-//        given().contentType("application/json").accept("application/json")
-//                .log().all().when().post("https://api.trello.com/1/cards/" +
-//                        idCard +"/" +
-//                        "idLabels?" +
-//                        "key="+ trelloKey +"&" +
-//                        "token="+trelloToken+"&" +
-//                        "value="+ idLabel)
-//                .then().assertThat().statusCode(200);
-//
-//        given().contentType("application/json").accept("application/json")
-//                .log().all().when().put("https://api.trello.com/1/labels/" +
-//                        idLabel + "/" +
-//                        "color?" +
-//                        "key="+ trelloKey+"&" +
-//                        "token="+ trelloToken +"&" +
-//                        "value=blue")
-//                .then().assertThat().statusCode(200);
-//
-//        given().contentType("application/json").accept("application/json")
-//                .log().all().when().delete("https://api.trello.com/1/cards/" +
-//                        idCard + "/" +
-//                        "idLabels/" +
-//                        idLabel + "?" +
-//                        "key="+ trelloKey +"&" +
-//                        "token=" + trelloToken)
-//                .then().assertThat().statusCode(200);
     }
-
-//    @Test
-//    public void ApiTestHttpRequest() throws URISyntaxException, IOException, InterruptedException {
-//        String nameBoard = UUID.randomUUID().toString().substring(2,10);
-//        String trelloKey = properties.getProperty("trello.key");
-//        String trelloToken = properties.getProperty("trello.token");
-//        HttpRequest createBoardRequest = (HttpRequest) HttpRequest.newBuilder()
-//                .header("accept", "application/json")
-//                .uri(new URL("https://api.trello.com/1/boards/?name="+nameBoard+"&key="+trelloKey+"&token=" + trelloToken).toURI())
-//                .POST(HttpRequest.BodyPublishers.ofString("", StandardCharsets.UTF_8)).build();
-//            HttpResponse createBoardResponse = HttpClient.newBuilder().build().send(createBoardRequest, HttpResponse.BodyHandlers.ofString());
-//            Assert.assertEquals(createBoardResponse.statusCode(), 200);
-//
-//    }
 }
