@@ -41,3 +41,4 @@ build/
 video/
 drivers/
 allure-results/
+mantis_user_table.sql
